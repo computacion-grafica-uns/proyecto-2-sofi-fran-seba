@@ -25,8 +25,12 @@ Shader "Custom/ShaderBlinnPhong"
     
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
         LOD 100
+
+        //Habilito aca el Alpha Blending
+        Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite On
 
         Pass
         {
@@ -84,8 +88,7 @@ Shader "Custom/ShaderBlinnPhong"
 
                 // Inicializadores de luz acumulada
                 float3 totalDiffuse = float3(0,0,0);
-                float3 totalSpecular = float3(0,0,0);
-
+                float4 totalSpecular = float4(0,0,0,0) ;
                 // direccional
                 float3 L1 = normalize(-_DirLightDirection.xyz);
                 
@@ -97,7 +100,7 @@ Shader "Custom/ShaderBlinnPhong"
                 if (NdotL1 > 0.0) {
                     float3 H1 = normalize(L1 + viewDir); // Vector medio h 
                     float NdotH1 = max(0.0, dot(normal, H1));
-                    totalSpecular += pow(NdotH1, _Shininess) * _DirLightColor.rgb;
+                    totalSpecular += pow(NdotH1, _Shininess) * _DirLightColor;
                 }
 
                 // puntual
@@ -115,7 +118,7 @@ Shader "Custom/ShaderBlinnPhong"
                 if (NdotL2 > 0.0) {
                     float3 H2 = normalize(L2 + viewDir);
                     float NdotH2 = max(0.0, dot(normal, H2));
-                    totalSpecular += pow(NdotH2, _Shininess) * _PointLightColor.rgb * attenPoint;
+                    totalSpecular += pow(NdotH2, _Shininess) * _PointLightColor * attenPoint;
                 }
 
                 // spot
@@ -139,16 +142,16 @@ Shader "Custom/ShaderBlinnPhong"
                     if (NdotL3 > 0.0) {
                         float3 H3 = normalize(L3 + viewDir);
                         float NdotH3 = max(0.0, dot(normal, H3));
-                        totalSpecular += pow(NdotH3, _Shininess) * _SpotLightColor.rgb * attenSpot;
+                        totalSpecular += pow(NdotH3, _Shininess) * _SpotLightColor * attenSpot;
                     }
                 }
 
                 // unifiacion
                 // El color difuso se multiplica por el color base del objeto
                 // El color especular se suma de forma aditiva por encima (reflejo brillante)
-                float3 finalColor = (totalDiffuse * _MainColor.rgb) + (totalSpecular * _SpecColor.rgb);
+                float4 finalColor = float4(totalDiffuse * _MainColor.rgb ,_MainColor.a) + totalSpecular * _SpecColor;
 
-                return float4(finalColor, _MainColor.a);
+                return (finalColor);
             }
             ENDCG
         }
