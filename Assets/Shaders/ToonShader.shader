@@ -6,7 +6,7 @@ Shader "Custom/ToonShader"
         _ShadowColor ("Shadow Color", Color) = (0.2, 0.2, 0.2, 1) // Color de la zona de sombra
         
         // Propiedades del Toon-Shader
-        _Glossiness ("Glossiness (Tamaño Brillo)", Range(0.01, 1.0)) = 0.5
+        _Glossiness ("Glossiness (Tamanio Brillo)", Range(0.01, 1.0)) = 0.5
         _ToonThreshold ("Toon Diffuse Threshold", Range(0.0, 1.0)) = 0.3
         _ToonSmoothness ("Toon Smoothness", Range(0.001, 0.5)) = 0.05
 
