@@ -92,6 +92,6 @@ Material:
     - _PointLightPosition: {r: -120, g: 24, b: 8, a: 1}
     - _ShadowColor: {r: 1, g: 0.3537736, b: 0.3537736, a: 1}
     - _SpotLightColor: {r: 0.7830189, g: 0.7054557, b: 0.7054557, a: 1}
-    - _SpotLightDirection: {r: 0, g: -1, b: 0, a: 0}
-    - _SpotLightPosition: {r: -120, g: 24, b: 8, a: 1}
+    - _SpotLightDirection: {r: -0.9701385, g: -0.24255204, b: 0, a: 0}
+    - _SpotLightPosition: {r: -108.9, g: 18.56, b: 4.45, a: 0}
   m_BuildTextureStacks: []

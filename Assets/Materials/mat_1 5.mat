@@ -78,7 +78,7 @@ Material:
     - _Roughness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpotRange: 10
+    - _SpotRange: 100
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
@@ -91,7 +91,7 @@ Material:
     - _MainColor: {r: 0.8584906, g: 0.8584906, b: 0.8584906, a: 1}
     - _PointLightColor: {r: 0.003921569, g: 0.003921569, b: 0.003921569, a: 1}
     - _PointLightPosition: {r: -118, g: 11.5, b: 3.6, a: 1}
-    - _SpotLightColor: {r: 0.3532396, g: 0.35480875, b: 0.509434, a: 1}
-    - _SpotLightDirection: {r: 0, g: -1, b: 0, a: 0}
-    - _SpotLightPosition: {r: 0, g: 3, b: 0, a: 1}
+    - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpotLightDirection: {r: -0.9701385, g: -0.24255204, b: 0, a: 0}
+    - _SpotLightPosition: {r: -108.9, g: 18.56, b: 4.45, a: 0}
   m_BuildTextureStacks: []

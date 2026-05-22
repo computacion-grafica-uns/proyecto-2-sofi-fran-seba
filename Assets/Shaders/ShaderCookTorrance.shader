@@ -6,7 +6,7 @@ Shader "Custom/ShaderCookTorrance"
         
         // Propiedades de Cook-Torrance
         _Roughness ("Roughness (rp)", Range(0.0, 1.0)) = 0.5
-        _F0 ("Fresnel Reflectance (F0)", Color) = (0.04, 0.04, 0.04, 1) // 0.04 para plástico/vidrio, valores más altos (ej. oro, cobre) para metales
+        _F0 ("Fresnel Reflectance (F0)", Color) = (0.04, 0.04, 0.04, 1) // 0.04 para plï¿½stico/vidrio, valores mï¿½s altos (ej. oro, cobre) para metales
         _RhoD ("Diffuse Coefficient (rho_d)", Range(0.0, 1.0)) = 0.5
 
         _DirLightDirection ("Directional Light Direction", Vector) = (0, -1, 0, 0)
@@ -27,6 +27,7 @@ Shader "Custom/ShaderCookTorrance"
     {
         Tags { "RenderType"="Opaque" "Queue"="Geometry" }
         LOD 100
+        
 
         Pass
         {
@@ -122,12 +123,12 @@ Shader "Custom/ShaderCookTorrance"
                 float G = GeometrySmith(NdotV, NdotL, alpha);
                 float3 F = FresnelSchlick(VdotH, F0);
 
-                // Término Especular (f_s)
+                // Tï¿½rmino Especular (f_s)
                 float3 specularNumerator = D * G * F;
                 float specularDenominator = 4.0 * NdotL * NdotV;
                 float3 f_s = specularNumerator / max(0.001, specularDenominator);
 
-                // Término Difuso (f_d)
+                // Tï¿½rmino Difuso (f_d)
                 float3 f_d = rhoD / 3.14159265;
 
                 // El resultado final de la BRDF para esta luz se multiplica por la irradiancia (NdotL * Color)
@@ -139,7 +140,7 @@ Shader "Custom/ShaderCookTorrance"
             {
                 float3 normal = normalize(i.normal_w);
                 
-                // Vector de visión hacia la cámara en World Space
+                // Vector de visiï¿½n hacia la cï¿½mara en World Space
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
 
                 //alpha = rp^2
@@ -175,7 +176,7 @@ Shader "Custom/ShaderCookTorrance"
                     lightSpotResult = ComputeCookTorrance(normal, L3, viewDir, lightSpotColor, alpha, F0, _RhoD);
                 }
 
-                // Unificación y modulación con el color de la superficie
+                // Unificaciï¿½n y modulaciï¿½n con el color de la superficie
                 float3 totalRadiance = lightDirResult + lightPointResult + lightSpotResult;
                 float3 finalColor = totalRadiance * _MainColor.rgb;
 
