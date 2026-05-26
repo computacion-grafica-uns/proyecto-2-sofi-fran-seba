@@ -159,6 +159,8 @@ Shader "Custom/ToonShader"
         // Propiedades del Toon-Shader
         _Glossiness ("Glossiness (Tamanio Brillo)", Range(0.01, 1.0)) = 0.5
         _ToonThreshold ("Toon Diffuse Threshold", Range(0.0, 1.0)) = 0.3
+
+        //define q tan difuminado/recto es el borde de la transicion
         _ToonSmoothness ("Toon Smoothness", Range(0.001, 0.5)) = 0.05
 
         _DirLightDirection ("Directional Light Direction", Vector) = (0, -1, 0, 0)
@@ -298,10 +300,10 @@ Shader "Custom/ToonShader"
                     totalSpecular += spec3 * _SpotLightColor.rgb;
                 }
 
-                // Clampeamos la acumulación difusa para evitar sobresaturar el lerp
+                //para q la suma de luces no pase de 1 uso saturate, asi el toon se mantiene entre el color de sombra y el color de luz pleno
                 totalDiffuseToon = saturate(totalDiffuseToon);
 
-                // Mezcla final: Interpolamos la sombra con el color base usando la intensidad toonizada
+                // lerp:linear interpolation, interpolamos la sombra con el color base usando la intensidad toonizada
                 float3 diffuseColor = lerp(_ShadowColor.rgb, _MainColor.rgb, totalDiffuseToon);
                 
                 // Sumamos el brillo especular acumulado
