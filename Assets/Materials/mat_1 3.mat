@@ -61,13 +61,13 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Apertura: 30
+    - _Apertura: 90
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.6
+    - _Glossiness: 1
     - _GlossyReflections: 1
     - _LightRange: 5
     - _Metallic: 0
@@ -78,20 +78,20 @@ Material:
     - _SpecularHighlights: 1
     - _SpotRange: 10
     - _SrcBlend: 1
-    - _ToonSmoothness: 0.4
-    - _ToonThreshold: 0.2
+    - _ToonSmoothness: 0.5
+    - _ToonThreshold: 0.8
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DirLightColor: {r: 0.3301887, g: 0.24452654, b: 0.24452654, a: 1}
     - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.6698113, g: 0.27018583, b: 0.13585795, a: 1}
-    - _PointLightColor: {r: 0.9433962, g: 0.80544674, b: 0.80544674, a: 1}
+    - _MainColor: {r: 0.3490566, g: 0.214985, b: 0.19263972, a: 1}
+    - _PointLightColor: {r: 0.5, g: 0.3466981, b: 0.3466981, a: 1}
     - _PointLightPosition: {r: -120, g: 24, b: 8, a: 1}
-    - _ShadowColor: {r: 1, g: 0.3537736, b: 0.3537736, a: 1}
-    - _SpotLightColor: {r: 0.7830189, g: 0.7054557, b: 0.7054557, a: 1}
-    - _SpotLightDirection: {r: -0.9701385, g: -0.24255204, b: 0, a: 0}
+    - _ShadowColor: {r: 0.38679248, g: 0.16297698, b: 0.07115523, a: 1}
+    - _SpotLightColor: {r: 0.5754717, g: 0.5754717, b: 0.5754717, a: 1}
+    - _SpotLightDirection: {r: -120, g: 20, b: 8, a: 0}
     - _SpotLightPosition: {r: -108.9, g: 18.56, b: 4.45, a: 0}
   m_BuildTextureStacks: []

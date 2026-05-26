@@ -74,7 +74,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Shininess: 38
+    - _Shininess: 100
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpotRange: 10
@@ -89,7 +89,7 @@ Material:
     - _MainColor: {r: 0.74641025, g: 0.9191322, b: 0.9308176, a: 0.08627451}
     - _PointLightColor: {r: 1, g: 0, b: 0, a: 1}
     - _PointLightPosition: {r: 0, g: 2, b: 0, a: 1}
-    - _SpecColor: {r: 0.9748427, g: 0.8246311, b: 0.8246311, a: 1}
+    - _SpecColor: {r: 0.4811321, g: 0.4811321, b: 0.4811321, a: 1}
     - _SpotLightColor: {r: 0, g: 0, b: 1, a: 1}
     - _SpotLightDirection: {r: -0.9701385, g: -0.24255204, b: 0, a: 0}
     - _SpotLightPosition: {r: -108.9, g: 18.56, b: 4.45, a: 0}

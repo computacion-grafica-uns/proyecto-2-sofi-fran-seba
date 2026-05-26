@@ -25,7 +25,11 @@ Shader "Custom/ShaderCookTorrance"
     
     SubShader
     {
-        Tags { "RenderType"="Opaque" "Queue"="Geometry" }
+
+
+        Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+         Blend SrcAlpha OneMinusSrcAlpha
+        ZWrite Off
         LOD 100
         
 
