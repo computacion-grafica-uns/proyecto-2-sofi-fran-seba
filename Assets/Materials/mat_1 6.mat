@@ -73,13 +73,18 @@ Material:
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _OutlineWidth: 0.015
     - _Parallax: 0.02
+    - _RimPower: 3
+    - _RimThreshold: 0.5
     - _SmoothnessTextureChannel: 0
+    - _SpecIntensity: 0.5
     - _SpecularHighlights: 1
     - _SpotRange: 100
     - _SrcBlend: 1
+    - _Steps: 2
     - _ToonSmoothness: 0.5
-    - _ToonThreshold: 1
+    - _ToonThreshold: 0.3
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
@@ -88,9 +93,11 @@ Material:
     - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.3962264, g: 0.37566748, b: 0.37566748, a: 1}
+    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 1, g: 0, b: 0, a: 1}
     - _PointLightPosition: {r: 0, g: 2, b: 0, a: 1}
-    - _ShadowColor: {r: 0.18867922, g: 0.17176929, b: 0.17176929, a: 1}
+    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
+    - _ShadowColor: {r: 0, g: 0, b: 0, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
     - _SpotLightPosition: {r: -103.825, g: 20.82, b: 22.22, a: 0}
