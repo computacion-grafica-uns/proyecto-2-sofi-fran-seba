@@ -76,7 +76,7 @@ Material:
     - _Parallax: 0.02
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpotRange: 10
+    - _SpotRange: 100
     - _SrcBlend: 1
     - _ToonSmoothness: 0.5
     - _ToonThreshold: 1
@@ -91,7 +91,7 @@ Material:
     - _PointLightColor: {r: 1, g: 0, b: 0, a: 1}
     - _PointLightPosition: {r: 0, g: 2, b: 0, a: 1}
     - _ShadowColor: {r: 0.18867922, g: 0.17176929, b: 0.17176929, a: 1}
-    - _SpotLightColor: {r: 0, g: 0, b: 1, a: 1}
-    - _SpotLightDirection: {r: 0, g: -1, b: 0, a: 0}
-    - _SpotLightPosition: {r: 0, g: 3, b: 0, a: 1}
+    - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
+    - _SpotLightPosition: {r: -103.825, g: 20.82, b: 22.22, a: 0}
   m_BuildTextureStacks: []
