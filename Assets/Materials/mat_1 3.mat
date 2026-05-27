@@ -75,14 +75,14 @@ Material:
     - _OcclusionStrength: 1
     - _OutlineWidth: 0.015
     - _Parallax: 0.02
-    - _PointLightRadius: 10
+    - _PointLightRadius: 50
     - _RimPower: 3
     - _RimThreshold: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecIntensity: 0.5
     - _SpecularHighlights: 1
-    - _SpotLightAngle: 0.5
-    - _SpotLightRange: 15
+    - _SpotLightAngle: 0.925
+    - _SpotLightRange: 30
     - _SpotRange: 100
     - _SrcBlend: 1
     - _Steps: 2
@@ -92,19 +92,19 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightColor: {r: 0.3301887, g: 0.24452654, b: 0.24452654, a: 1}
+    - _DirLightColor: {r: 0.27672952, g: 0.09485378, b: 0.09485378, a: 1}
     - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.764151, g: 0.59527415, b: 0.56590426, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PointLightColor: {r: 0.5, g: 0.3466981, b: 0.3466981, a: 1}
+    - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
     - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
-    - _PointLightPosition: {r: -115.16, g: 18.15, b: 4.12, a: 0}
+    - _PointLightPosition: {r: -114.38, g: 21.91, b: -10.14, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.31132078, g: 0.12612364, b: 0.048460316, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDir: {r: 0, g: -1, b: 0, a: 0}
-    - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
+    - _SpotLightDirection: {r: -0.98671234, g: 0.0024052183, b: -0.16245925, a: 0}
     - _SpotLightPos: {r: 0, g: 5, b: 0, a: 1}
-    - _SpotLightPosition: {r: -103.825, g: 20.82, b: -2.64, a: 0}
+    - _SpotLightPosition: {r: -114.05, g: 19.24, b: 4.46, a: 0}
   m_BuildTextureStacks: []

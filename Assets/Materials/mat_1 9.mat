@@ -81,8 +81,8 @@ Material:
     - _SmoothnessTextureChannel: 0
     - _SpecIntensity: 0.5
     - _SpecularHighlights: 1
-    - _SpotLightAngle: 0.5
-    - _SpotLightRange: 15
+    - _SpotLightAngle: 0.925
+    - _SpotLightRange: 30
     - _SpotRange: 100
     - _SrcBlend: 1
     - _Steps: 2
@@ -99,12 +99,12 @@ Material:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 1, g: 0, b: 0, a: 1}
     - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
-    - _PointLightPosition: {r: -115.16, g: 18.15, b: 4.12, a: 0}
+    - _PointLightPosition: {r: -114.38, g: 21.91, b: -10.14, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.36739054, g: 0.6037736, b: 0.5722559, a: 0.4392157}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDir: {r: 0, g: -1, b: 0, a: 0}
-    - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
+    - _SpotLightDirection: {r: -0.98671234, g: 0.0024052183, b: -0.16245925, a: 0}
     - _SpotLightPos: {r: 0, g: 5, b: 0, a: 1}
-    - _SpotLightPosition: {r: -103.825, g: 20.82, b: -2.64, a: 0}
+    - _SpotLightPosition: {r: -114.05, g: 19.24, b: 4.46, a: 0}
   m_BuildTextureStacks: []

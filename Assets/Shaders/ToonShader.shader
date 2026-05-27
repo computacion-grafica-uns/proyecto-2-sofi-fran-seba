@@ -418,8 +418,8 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
         _PointLightRadius ("Point Light Radius", Range(0.1, 50.0)) = 10.0
 
         [Header(Spot Light Setup)]
-        _SpotLightPos ("Spot Light Position (XYZ)", Vector) = (0, 5, 0, 1)
-        _SpotLightDir ("Spot Light Direction", Vector) = (0, -1, 0, 0)
+        _SpotLightPosition ("Spot Light Position (XYZ)", Vector) = (0, 5, 0, 1)
+        _SpotLightDirection ("Spot Light Direction", Vector) = (0, -1, 0, 0)
         _SpotLightColor ("Spot Light Color", Color) = (1, 1, 1, 1)
         _SpotLightRange ("Spot Light Range", Range(0.1, 50.0)) = 15.0
         _SpotLightAngle ("Spot Light Angle (Cos Outer)", Range(0.0, 1.0)) = 0.5
@@ -487,16 +487,13 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 return output;
             }
 
-            // Calcula la máscara de intensidad Toon (0 a 1) para cada luz
             void GetToonLightMask(float3 normal, float3 viewDir, float3 lightDir, float atten, out float diffuseMask, out float specMask)
             {
-                // Difuso con pasos
                 float NdotL = dot(normal, lightDir);
                 float halfLambert = NdotL * 0.5 + 0.5; 
                 float toonIntensity = floor(halfLambert * _Steps) / (_Steps - 1);
                 diffuseMask = smoothstep(_ToonThreshold - _ToonSmoothness, _ToonThreshold + _ToonSmoothness, toonIntensity) * atten;
 
-                // Especular nítido
                 float3 H = normalize(viewDir + lightDir);
                 float NdotH = max(0.0, dot(normal, H));
                 float specIntensity = pow(NdotH, (1.0 - _Glossiness) * 128.0);
@@ -508,7 +505,6 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 float3 normal = normalize(i.normal_w);
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
                 
-                // Acumuladores globales
                 float totalDiffuseLight = 0.0;
                 float3 totalSpecular = float3(0,0,0);
                 float3 extraLightColorAdditive = float3(0,0,0);
@@ -530,7 +526,7 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 float pointDist = length(pointLightVec);
                 float3 pointLightDir = normalize(pointLightVec);
                 
-                float pointAtten = saturate(1.0 - (pointDist / _PointLightRadius));
+                float pointAtten = saturate(1.0 - (pointDist / max(0.001, _PointLightRadius)));
                 pointAtten *= pointAtten; 
                 
                 float diffPoint, specPoint;
@@ -538,34 +534,36 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 
                 totalDiffuseLight += diffPoint; 
                 totalSpecular += specPoint * _PointLightColor.rgb;
-                // Guardamos el color de la luz para teñir las zonas iluminadas extra
                 extraLightColorAdditive += diffPoint * _PointLightColor.rgb;
 
                 // ==========================================
-                // 3. LUZ FOCAL (Spot Light - CORREGIDA)
+                // 3. LUZ FOCAL (Spot Light - COMPLETAMENTE FIXEADA)
                 // ==========================================
-                // Vector que va de la LUZ al OBJETO
+                // Vector del foco hacia el fragmento del objeto
                 float3 spotLightVec = i.worldPos - _SpotLightPosition.xyz; 
                 float spotDist = length(spotLightVec);
                 float3 dirToObj = normalize(spotLightVec);
                 
-                // Vector que va del OBJETO a la LUZ (para el cálculo de sombreado NdotL)
-                float3 _SpotLightDirection = -dirToObj; 
+                // Vector desde el objeto HACIA la luz (para el sombreado NdotL)
+                float3 lightToSpotDir = -dirToObj; 
 
-                float spotDistAtten = saturate(1.0 - (spotDist / _SpotLightRange));
+                // Atenuación por distancia (usando el nombre global correcto)
+                float spotDistAtten = saturate(1.0 - (spotDist / max(0.001, _SpotLightRange)));
                 spotDistAtten *= spotDistAtten;
 
+                // Usamos la variable global real que actualiza tu script de C#
                 float3 currentSpotDir = normalize(_SpotLightDirection.xyz);
                 
-                // CORRECCIÓN: Comparamos la dirección del cono con el vector corregido hacia el objeto
+                // Producto punto entre el frente de la linterna y la dirección al objeto
                 float cosAngle = dot(dirToObj, currentSpotDir);
                 
-                // Control del cono Toon
+                // Cono de luz Toon nítido
                 float spotConeAtten = smoothstep(_SpotLightAngle - 0.05, _SpotLightAngle + 0.05, cosAngle);
                 float spotAtten = spotDistAtten * spotConeAtten;
 
                 float diffSpot, specSpot;
-                GetToonLightMask(normal, viewDir, _SpotLightDirection, spotAtten, diffSpot, specSpot);
+                // Pasamos "lightToSpotDir" para calcular las bandas de luz correctamente
+                GetToonLightMask(normal, viewDir, lightToSpotDir, spotAtten, diffSpot, specSpot);
                 
                 totalDiffuseLight += diffSpot;
                 totalSpecular += specSpot * _SpotLightColor.rgb;
@@ -576,19 +574,14 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 // ==========================================
                 totalDiffuseLight = saturate(totalDiffuseLight);
 
-                // Mezclamos la base de sombra y luz principal
                 float3 baseDiffuse = lerp(_ShadowColor.rgb, _MainColor.rgb, totalDiffuseLight);
-                
-                // Añadimos el tinte de las luces extras (Point/Spot) de forma puramente aditiva
                 float3 finalDiffuse = baseDiffuse + extraLightColorAdditive * _MainColor.rgb;
 
-                // Efecto Rim 
                 float rimDot = 1.0 - max(0.0, dot(normal, viewDir));
                 float rimIntensity = pow(rimDot, _RimPower);
                 rimIntensity = smoothstep(_RimThreshold - 0.05, _RimThreshold + 0.05, rimIntensity) * totalDiffuseLight;
                 float3 finalRim = rimIntensity * _RimColor.rgb;
 
-                // Multiplicamos por la luz ambiental/direccional general
                 float3 finalColor = (finalDiffuse + totalSpecular + finalRim) * _DirLightColor.rgb;
 
                 return float4(finalColor, _MainColor.a);
