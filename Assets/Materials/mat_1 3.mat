@@ -99,12 +99,12 @@ Material:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 0.5, g: 0.3466981, b: 0.3466981, a: 1}
     - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
-    - _PointLightPosition: {r: -120, g: 24, b: 8, a: 1}
+    - _PointLightPosition: {r: -120.35, g: 21.91, b: 1.772, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.31132078, g: 0.12612364, b: 0.048460316, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDir: {r: 0, g: -1, b: 0, a: 0}
     - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
     - _SpotLightPos: {r: 0, g: 5, b: 0, a: 1}
-    - _SpotLightPosition: {r: -103.825, g: 20.82, b: 22.22, a: 0}
+    - _SpotLightPosition: {r: -103.825, g: 20.82, b: -2.64, a: 0}
   m_BuildTextureStacks: []
