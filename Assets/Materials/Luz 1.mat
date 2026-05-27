@@ -7,13 +7,14 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_1 13
-  m_Shader: {fileID: 4800000, guid: ee8a41f8d16ad0242bbcf27e6abf3e47, type: 3}
+  m_Name: Luz 1
+  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _EMISSION
   m_InvalidKeywords: []
-  m_LightmapFlags: 4
+  m_LightmapFlags: 2
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: -1
@@ -61,7 +62,6 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Apertura: 30
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -69,31 +69,16 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightRange: 10
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Radio: 0.25
-    - _Repeticion: 10
-    - _Shininess: 32
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
-    - _SpotRange: 100
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _ColorFondo: {r: 0.8, g: 0.09999997, b: 0.19999996, a: 1}
-    - _ColorLunares: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightDirection: {r: -120, g: -0.5, b: 0.5, a: 0}
-    - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _PointLightPosition: {r: -118.93, g: 21.05, b: 3.3, a: 0}
-    - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
-    - _SpotLightPosition: {r: -103.825, g: 20.82, b: -2.64, a: 0}
+    - _EmissionColor: {r: 1, g: 0.7710097, b: 0, a: 1}
   m_BuildTextureStacks: []
