@@ -154,7 +154,7 @@ Shader "Custom/ToonShader_Anime"
     Properties
     {
         _MainColor ("Base Color", Color) = (1, 1, 1, 1)
-        _ShadowColor ("Shadow Color", Color) = (0.2, 0.2, 0.4, 1) // Las sombras anime suelen ser algo azuladas/frías
+        _ShadowColor ("Shadow Color", Color) = (0.2, 0.2, 0.4, 1) 
         
         [Header(Toon Settings)]
         _Steps ("Cantidad de Bandas de Luz", Range(1, 4)) = 2
@@ -174,9 +174,21 @@ Shader "Custom/ToonShader_Anime"
         _OutlineColor ("Color de la Linea", Color) = (0, 0, 0, 1)
         _OutlineWidth ("Grosor de la Linea", Range(0.0, 0.1)) = 0.015
         
-        [Header(Lights Setup)]
+        [Header(Directional Light Setup)]
         _DirLightDirection ("Directional Light Direction", Vector) = (0, -1, 0, 0)
         _DirLightColor ("Directional Light Color", Color) = (1, 1, 1, 1)
+
+        [Header(Point Light Setup)]
+        _PointLightPos ("Point Light Position (XYZ)", Vector) = (0, 2, 0, 1)
+        _PointLightColor ("Point Light Color", Color) = (1, 1, 1, 1)
+        _PointLightRadius ("Point Light Radius", Range(0.1, 50.0)) = 10.0
+
+        [Header(Spot Light Setup)]
+        _SpotLightPos ("Spot Light Position (XYZ)", Vector) = (0, 5, 0, 1)
+        _SpotLightDir ("Spot Light Direction", Vector) = (0, -1, 0, 0)
+        _SpotLightColor ("Spot Light Color", Color) = (1, 1, 1, 1)
+        _SpotLightRange ("Spot Light Range", Range(0.1, 50.0)) = 15.0
+        _SpotLightAngle ("Spot Light Angle (Cos Outer)", Range(0.0, 1.0)) = 0.5
     }
     
     SubShader
@@ -187,7 +199,7 @@ Shader "Custom/ToonShader_Anime"
         // --- PASS 1: EL OUTLINE (Dibuja los bordes negros) ---
         Pass
         {
-            Cull Front // Renderiza solo las caras internas invertidas
+            Cull Front 
 
             CGPROGRAM
             #pragma vertex vert
@@ -211,7 +223,6 @@ Shader "Custom/ToonShader_Anime"
             v2f vert (appdata v)
             {
                 v2f o;
-                // Extruimos los vértices un poco en la dirección de sus normales
                 float3 worldNormal = UnityObjectToWorldNormal(v.normal);
                 float4 worldPos = mul(unity_ObjectToWorld, v.vertex);
                 worldPos.xyz += worldNormal * _OutlineWidth;
@@ -222,15 +233,15 @@ Shader "Custom/ToonShader_Anime"
 
             fixed4 frag (v2f i) : SV_Target
             {
-                return _OutlineColor; // Retorna el color plano del borde
+                return _OutlineColor; 
             }
             ENDCG
         }
 
-        // --- PASS 2: EL SOMBREADO CEL (Cuerpo del objeto) ---
+        // --- PASS 2: EL SOMBREADO CEL (Cuerpo del objeto con 3 Luces) ---
         Pass
         {
-            Cull Back // Renderizado normal
+            Cull Back 
 
             CGPROGRAM
             #pragma vertex vert
@@ -263,8 +274,19 @@ Shader "Custom/ToonShader_Anime"
             float _RimPower;
             float _RimThreshold;
 
+            // Variables de Luces
             float4 _DirLightDirection;
             float4 _DirLightColor;
+
+            float4 _PointLightPos;
+            float4 _PointLightColor;
+            float _PointLightRadius;
+
+            float4 _SpotLightPos;
+            float4 _SpotLightDir;
+            float4 _SpotLightColor;
+            float _SpotLightRange;
+            float _SpotLightAngle;
 
             v2f vert(vertexdata v)
             {
@@ -275,42 +297,85 @@ Shader "Custom/ToonShader_Anime"
                 return output;
             }
 
+            // Función interna para calcular la iluminación Toon por cada luz de forma idéntica a tu lógica original
+            float3 CalculateToonLight(float3 normal, float3 viewDir, float3 lightDir, float3 lightColor, float atten)
+            {
+                // 1. DIFUSO TOON CON PASOS
+                float NdotL = dot(normal, lightDir);
+                float halfLambert = NdotL * 0.5 + 0.5; 
+                
+                float toonIntensity = floor(halfLambert * _Steps) / (_Steps - 1);
+                toonIntensity = smoothstep(_ToonThreshold - _ToonSmoothness, _ToonThreshold + _ToonSmoothness, toonIntensity);
+                
+                // Aplicamos la atenuación directo a la intensidad toon para que la sombra actúe de forma fluida
+                float3 diffuseColor = lerp(_ShadowColor.rgb, _MainColor.rgb, toonIntensity * atten);
+
+                // 2. ESPECULAR ANIME
+                float3 H = normalize(viewDir + lightDir);
+                float NdotH = max(0.0, dot(normal, H));
+                float specIntensity = pow(NdotH, (1.0 - _Glossiness) * 128.0);
+                float specularToon = smoothstep(0.5 - 0.01, 0.5 + 0.01, specIntensity) * _SpecIntensity;
+                float3 finalSpecular = specularToon * lightColor * atten;
+
+                // 3. RIM LIGHTING
+                float rimDot = 1.0 - max(0.0, dot(normal, viewDir));
+                float rimIntensity = pow(rimDot, _RimPower);
+                rimIntensity = smoothstep(_RimThreshold - 0.05, _RimThreshold + 0.05, rimIntensity) * max(0.0, NdotL);
+                float3 finalRim = rimIntensity * _RimColor.rgb * atten;
+
+                return (diffuseColor + finalSpecular + finalRim) * lightColor;
+            }
+
             fixed4 frag (v2f i) : SV_Target
             {
                 float3 normal = normalize(i.normal_w);
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
-                float3 lightDir = normalize(-_DirLightDirection.xyz);
-
-                // 1. DIFUSO TOON CON PASOS (Bandas de sombra estilo Anime)
-                float NdotL = dot(normal, lightDir);
-                // Remapeamos el valor de -1 a 1 hacia 0 a 1
-                float halfLambert = NdotL * 0.5 + 0.5; 
                 
-                // Cuantización: divide el degradado en bloques sólidos
-                float toonIntensity = floor(halfLambert * _Steps) / (_Steps - 1);
-                // Suavizado ultra fino en el borde del escalón para evitar aliasing (serrucho)
-                toonIntensity = smoothstep(_ToonThreshold - _ToonSmoothness, _ToonThreshold + _ToonSmoothness, toonIntensity);
+                float3 finalColor = float3(0,0,0);
+
+                // ==========================================
+                // 1. LUZ DIRECCIONAL (Sin Atenuación por distancia)
+                // ==========================================
+                float3 dirLightDir = normalize(-_DirLightDirection.xyz);
+                finalColor += CalculateToonLight(normal, viewDir, dirLightDir, _DirLightColor.rgb, 1.0);
+
+                // ==========================================
+                // 2. LUZ PUNTUAL (Point Light con atenuación por distancia)
+                // ==========================================
+                float3 pointLightVec = _PointLightPos.xyz - i.worldPos;
+                float pointDist = length(pointLightVec);
+                float3 pointLightDir = normalize(pointLightVec);
                 
-                float3 diffuseColor = lerp(_ShadowColor.rgb, _MainColor.rgb, toonIntensity);
+                // Atenuación lineal/cuadrática simple basada en el radio configurado
+                float pointAtten = saturate(1.0 - (pointDist / _PointLightRadius));
+                pointAtten *= pointAtten; // Caída más suave
+                
+                finalColor += CalculateToonLight(normal, viewDir, pointLightDir, _PointLightColor.rgb, pointAtten);
 
-                // 2. ESPECULAR ANIME (Corte perfectamente nítido)
-                float3 H = normalize(viewDir + lightDir);
-                float NdotH = max(0.0, dot(normal, H));
-                float specIntensity = pow(NdotH, (1.0 - _Glossiness) * 128.0);
-                // Corte limpio para el brillo plano de los ojos o cabello
-                float specularToon = smoothstep(0.5 - 0.01, 0.5 + 0.01, specIntensity) * _SpecIntensity;
-                float3 finalSpecular = specularToon * _DirLightColor.rgb;
+                // ==========================================
+                // 3. LUZ FOCAL (Spot Light con atenuación de distancia y cono)
+                // ==========================================
+                float3 spotLightVec = _SpotLightPos.xyz - i.worldPos;
+                float spotDist = length(spotLightVec);
+                float3 spotLightDir = normalize(spotLightVec);
+                
+                // Atenuación por distancia
+                float spotDistAtten = saturate(1.0 - (spotDist / _SpotLightRange));
+                spotDistAtten *= spotDistAtten;
 
-                // 3. RIM LIGHTING (Efecto de silueta iluminada)
-                float rimDot = 1.0 - max(0.0, dot(normal, viewDir));
-                float rimIntensity = pow(rimDot, _RimPower);
-                // El rim solo aparece donde la luz principal golpea para que se sienta natural
-                rimIntensity = smoothstep(_RimThreshold - 0.05, _RimThreshold + 0.05, rimIntensity) * max(0.0, NdotL);
-                float3 finalRim = rimIntensity * _RimColor.rgb;
+                // Atenuación por cono del Spot (Ángulo)
+                float3 currentSpotDir = normalize(_SpotLightDir.xyz);
+                float cosAngle = dot(-spotLightDir, currentSpotDir);
+                
+                // El corte del borde del cono se suaviza levemente estilo Toon
+                float spotConeAtten = smoothstep(_SpotLightAngle, _SpotLightAngle + 0.1, cosAngle);
+                float spotAtten = spotDistAtten * spotConeAtten;
 
-                // Combinación final
-                float3 finalColor = (diffuseColor + finalSpecular + finalRim) * _DirLightColor.rgb;
+                finalColor += CalculateToonLight(normal, viewDir, spotLightDir, _SpotLightColor.rgb, spotAtten);
 
+                // ==========================================
+                // Salida Final
+                // ==========================================
                 return float4(finalColor, _MainColor.a);
             }
             ENDCG
