@@ -88,9 +88,9 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.23584905, g: 0.22806159, b: 0.22806159, a: 1}
     - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _PointLightPosition: {r: -115.12, g: 15.81, b: 10.06, a: 0}
+    - _PointLightPosition: {r: -115.16, g: 18.15, b: 4.12, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _SpotLightDirection: {r: -0.96006024, g: -0.27979314, b: 0, a: 0}
-    - _SpotLightPosition: {r: -112.1, g: 18.41, b: 4.13, a: 0}
+    - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
+    - _SpotLightPosition: {r: -103.825, g: 20.82, b: -2.64, a: 0}
   m_BuildTextureStacks: []
