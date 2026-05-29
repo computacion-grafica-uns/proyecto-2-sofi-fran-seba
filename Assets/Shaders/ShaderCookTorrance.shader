@@ -6,7 +6,7 @@ Shader "Custom/ShaderCookTorrance"
         
         // Propiedades de Cook-Torrance
         _Roughness ("Roughness (rp)", Range(0.0, 1.0)) = 0.5
-        _F0 ("Fresnel Reflectance (F0)", Color) = (0.04, 0.04, 0.04, 1) // 0.04 para pl�stico/vidrio, valores m�s altos (ej. oro, cobre) para metales
+        _F0 ("Fresnel Reflectance (F0)", Color) = (0.04, 0.04, 0.04, 1) // 0.04 para plastico/vidrio, valores mas altos (ej. oro, cobre) para metales
         _RhoD ("Diffuse Coefficient (rho_d)", Range(0.0, 1.0)) = 0.5
 
         _DirLightDirection ("Directional Light Direction", Vector) = (0, -1, 0, 0)

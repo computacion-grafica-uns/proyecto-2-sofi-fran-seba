@@ -87,11 +87,11 @@ Material:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _ColorFondo: {r: 0.8, g: 0.09999997, b: 0.19999996, a: 1}
     - _ColorLunares: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DirLightColor: {r: 0.6289307, g: 0.5597087, b: 0.5597087, a: 1}
     - _DirLightDirection: {r: -120, g: -0.5, b: 0.5, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _PointLightPosition: {r: -118.93, g: 21.05, b: 3.3, a: 0}
+    - _PointLightPosition: {r: -108.29, g: 21.91, b: -8.85, a: 0}
     - _SpecularColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}

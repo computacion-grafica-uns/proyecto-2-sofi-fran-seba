@@ -9,7 +9,20 @@ Shader "Custom/ShaderCookTorranceNormalMap"
         _F0 ("Reflectancia Base (Fresnel F0)", Range(0.0, 1.0)) = 0.04
         _Roughness ("Rugosidad (Alpha)", Range(0.01, 1.0)) = 0.5
         
-        _LightPos ("Posición de la Luz (World Space)", Vector) = (0, 3, 0, 1)
+        //======================== LUCES =============================
+        _DirLightDirection ("Directional Light Direction", Vector) = (0, -1, 0, 0)
+        _DirLightColor ("Directional Light Color", Color) = (1, 1, 1, 1)
+        
+        _PointLightPosition ("Point Light Position", Vector) = (0, 2, 0, 1)
+        _PointLightColor ("Point Light Color", Color) = (1, 0, 0, 1)
+        _LightRange ("Light Range", Float) = 5.0
+        
+        _SpotLightPosition ("Spot Light Position", Vector) = (0, 3, 0, 1)
+        _SpotLightDirection ("Spot Light Direction", Vector) = (0, -1, 0, 0)
+        _SpotLightColor ("Spot Light Color", Color) = (0, 0, 1, 1)
+        _Apertura ("Apertura (Angulo)", Range(0.0, 90.0)) = 30.0
+        _SpotRange ("Spot Range", Float) = 10.0
+        //============================================================
     }
     SubShader
     {
@@ -27,25 +40,40 @@ Shader "Custom/ShaderCookTorranceNormalMap"
             float4 _MaterialColor;
             sampler2D _MainTex;
             sampler2D _NormalMap;
-            float4 _MainTex_ST; // Necesario para el escalado de UVs
+            float4 _MainTex_ST;
             
             float _F0;
             float _Roughness;
-            float4 _LightPos;
+
+            // Variables Globales de Luces
+            float4 _DirLightDirection;
+            float4 _DirLightColor;
+            
+            float4 _PointLightPosition;
+            float4 _PointLightColor;
+            float _LightRange;
+            
+            float4 _SpotLightPosition;
+            float4 _SpotLightDirection;
+            float4 _SpotLightColor;
+            float _Apertura;
+            float _SpotRange;
 
             struct appdata {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
-                float4 tangent : TANGENT; // Trae la dirección de la tangente y el signo
+                float4 tangent : TANGENT; // Trae la direcciÃ³n de la tangente y el signo w 
                 float2 uv : TEXCOORD0;
             };
 
             struct v2f {
                 float4 pos : SV_POSITION;
                 float2 uv : TEXCOORD0;
-                // Mandamos los vectores ya transformados al Espacio de Tangente
-                float3 lightDirTangent : TEXCOORD1;
-                float3 viewDirTangent : TEXCOORD3;
+                float3 worldPos : TEXCOORD1;
+                // Pasamos los vectores de la geometrÃ­a base para armar el TBN en el frag
+                float3 worldNormal : TEXCOORD3;
+                float3 worldTangent : TEXCOORD4;
+                float3 worldBitangent : TEXCOORD5;
             };
 
             v2f vert (appdata v) {
@@ -53,82 +81,116 @@ Shader "Custom/ShaderCookTorranceNormalMap"
                 o.pos = UnityObjectToClipPos(v.vertex);
                 o.uv = TRANSFORM_TEX(v.uv, _MainTex);
 
-                // 1. Calculamos la posición del vértice en el mundo
-                float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
-
-                // 2. Reconstruimos los tres ejes del espacio TBN en World Space
-                float3 worldNormal = UnityObjectToWorldNormal(v.normal);
-                float3 worldTangent = UnityObjectToWorldDir(v.tangent.xyz);
-                // El Bitangente es perpendicular a los otros dos
-                float3 worldBitangent = cross(worldNormal, worldTangent) * v.tangent.w;
-
-                // 3. Creamos la matriz TBN (de Mundo a Tangente)
-                // En HLSL, multiplicar un vector por filas de una matriz es lo mismo que rotarlo
-                float3x3 worldToTangentSpace = float3x3(worldTangent, worldBitangent, worldNormal);
-
-                // 4. Calculamos los vectores originales en World Space
-                float3 worldL = _LightPos.xyz - worldPos; // Vector hacia la luz sin normalizar (para distancia)
-                float3 worldV = _WorldSpaceCameraPos - worldPos; // Vector hacia la cámara
-
-                // 5. Los transformamos al espacio de la textura usando la matriz TBN
-                o.lightDirTangent = mul(worldToTangentSpace, worldL);
-                o.viewDirTangent = mul(worldToTangentSpace, worldV);
+                // Calculamos y enviamos los vectores base en World Space 
+                o.worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
+                o.worldNormal = UnityObjectToWorldNormal(v.normal);
+                o.worldTangent = UnityObjectToWorldDir(v.tangent.xyz);
+                
+                // El Bitangente se calcula con el producto cruz de los anteriores y el signo w 
+                o.worldBitangent = cross(o.worldNormal, o.worldTangent) * v.tangent.w;
 
                 return o;
             }
 
-            fixed4 frag (v2f i) : SV_Target {
-                // 1. LEER EL NORMAL MAP
-                // UnpackNormal toma el color de la textura y reconstruye el vector corregido en rango [-1, 1]
-                float3 N = UnpackNormal(tex2D(_NormalMap, i.uv));
-                N = normalize(N); // Aseguramos que la normal de la textura esté normalizada
-
-                // 2. Normalizamos los vectores que vienen del vertex interpolados
-                float3 L = normalize(i.lightDirTangent);
-                float3 V = normalize(i.viewDirTangent);
+            // --- FUNCIÃ“N AUXILIAR REUTILIZABLE DE COOK-TORRANCE ---
+            float3 ComputeCookTorrance(float3 N, float3 L, float3 V, float3 lightColor, float roughness, float F0, float3 albedoColor)
+            {
+                float3 H = normalize(L + V); // Vector Medio 
                 
-                // Vector Medio (H) en espacio de tangente
-                float3 H = normalize(L + V);
-
-                // 3. Productos punto protegidos para las funciones D, F, G
-                float dotNL = dot(N, L); // Guardamos el puro para el terminador
-                float NdotL = max(0.0001, dotNL);
+                float dotNL = dot(N, L);
+                float NdotL = max(0.0001, dotNL); // Evitamos divisiÃ³n por cero 
                 float NdotV = max(0.0001, dot(N, V));
                 float NdotH = max(0.0, dot(N, H));
                 float HdotV = max(0.0, dot(H, V));
 
-                // --- Ecuación D (GGX) ---
-                float alpha2 = _Roughness * _Roughness;
-                float denomD = (NdotH * NdotH) * (alpha2 - 1.0) + 1.0;
-                float D = alpha2 / (3.14159265 * denomD * denomD);
+                // --- EcuaciÃ³n D (GGX) --- 
+                float alpha2 = roughness * roughness;
+                float denomD = (NdotH * NdotH) * (alpha2 - 1.0) + 1.0; 
+                float D = alpha2 / (3.14159265 * denomD * denomD); 
 
-                // --- Ecuación F (Schlick) ---
-                float F = _F0 + (1.0 - _F0) * pow(1.0 - HdotV, 5.0);
+                // --- EcuaciÃ³n F (Schlick) --- 
+                float F = F0 + (1.0 - F0) * pow(1.0 - HdotV, 5.0);
 
-                // --- Ecuación G (Schlick-GGX / Smith corregido) ---
-                float k = _Roughness / 2.0;
-                float G1_L = NdotL / (NdotL * (1.0 - k) + k);
-                float G1_V = NdotV / (NdotV * (1.0 - k) + k);
-                float G = G1_L * G1_V; 
-               
-                // --- BRILLO ESPECULAR COOK-TORRANCE ---
+                // --- EcuaciÃ³n G (Schlick-GGX / Smith) --- 
+                float k = roughness / 2.0;
+                float G1_L = NdotL / (NdotL * (1.0 - k) + k); 
+                float G1_V = NdotV / (NdotV * (1.0 - k) + k); 
+                float G = G1_L * G1_V;
+
+                // --- BRILLO ESPECULAR COOK-TORRANCE --- 
                 float specularTerm = (D * F * G) / (4.0 * NdotL * NdotV);
-                float3 specular = specularTerm * float3(1, 1, 1);
+                float3 specular = specularTerm * float3(1, 1, 1); 
 
-                // --- COMPONENTE DIFUSA (Albedo + Lambert) ---
-                float3 albedoColor = tex2D(_MainTex, i.uv).rgb * _MaterialColor.rgb;
+                // --- COMPONENTE DIFUSA (Lambert) ---
                 float realLambert = max(0.0, dotNL);
                 float3 diffuse = realLambert * albedoColor;
 
                 // --- FILTRO DEL TERMINADOR SUAVE ---
-                // Usamos el smoothstep para que en las micro-sombras del normal map
-                // el specular no genere tajos raros y se apague de manera prolija.
+                // Evita que el specular flote de manera irreal en las micro-sombras del normal map 
                 float terminadorMask = smoothstep(0.0, 0.05, dotNL);
-                specular *= terminadorMask;
+                specular *= terminadorMask; 
 
-                // --- SUMA TOTAL ---
-                fixed4 fragColor = 1;
-                fragColor.rgb = diffuse + specular;
+                // El resultado final de esta luz es la suma afectada por su color/intensidad
+                return (diffuse + specular) * lightColor;
+            }
+
+            fixed4 frag (v2f i) : SV_Target {
+                // 1. Reconstruimos la matriz Tangent-to-World (TBN) en el fragment shader
+                float3 T = normalize(i.worldTangent);
+                float3 B = normalize(i.worldBitangent);
+                float3 M = normalize(i.worldNormal);
+                float3x3 tangentToWorldSpace = float3x3(T, B, M);
+
+                // 2. Desempaquetamos la normal del mapa y la transformamos directamente a World Space
+                float3 normalFromMap = UnpackNormal(tex2D(_NormalMap, i.uv));
+                float3 normal = normalize(mul(normalFromMap, tangentToWorldSpace));
+
+                // 3. Vector de vista en World Space
+                float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
+
+                // 4. Color base del objeto (Albedo) 
+                float3 texColor = tex2D(_MainTex, i.uv).rgb;
+                float3 albedo = texColor * _MaterialColor.rgb;
+
+                // --- 1) LUZ DIRECCIONAL ---
+                float3 L1 = normalize(-_DirLightDirection.xyz);
+                float3 lightDirResult = ComputeCookTorrance(normal, L1, viewDir, _DirLightColor.rgb, _Roughness, _F0, albedo);
+
+                // --- 2) LUZ PUNTUAL ---
+                float3 toPoint = _PointLightPosition.xyz - i.worldPos;
+                float distancePoint = length(toPoint);
+                float3 L2 = normalize(toPoint);
+                
+                float attenPoint = max(0.0, 1.0 - (distancePoint / _LightRange));
+                float3 lightPointColor = _PointLightColor.rgb * attenPoint;
+                float3 lightPointResult = ComputeCookTorrance(normal, L2, viewDir, lightPointColor, _Roughness, _F0, albedo);
+
+                // --- 3) LUZ SPOT (REFLECTOR) ---
+                float3 toSpot = _SpotLightPosition.xyz - i.worldPos;
+                float distanceSpot = length(toSpot);
+                float3 L3 = normalize(toSpot);
+                float3 spotDir = normalize(-_SpotLightDirection.xyz);
+                
+                float cosCurrentAngle = dot(L3, spotDir);
+                float cosAperture = cos(radians(_Apertura));
+
+                float3 lightSpotResult = float3(0, 0, 0);
+                if (cosCurrentAngle > cosAperture)
+                {
+                    float attenSpot = max(0.0, 1.0 - (distanceSpot / _SpotRange));
+                    
+                    // Suavizado en el contorno del cono de luz para evitar bordes dentados
+                    float spotIntensity = smoothstep(cosAperture, cosAperture + 0.04, cosCurrentAngle);
+                    
+                    float3 lightSpotColor = _SpotLightColor.rgb * attenSpot * spotIntensity;
+                    lightSpotResult = ComputeCookTorrance(normal, L3, viewDir, lightSpotColor, _Roughness, _F0, albedo);
+                }
+
+                // --- COMBINACIÃ“N FINAL ---
+                fixed4 fragColor = fixed4(0, 0, 0, 1);
+                
+                // Acumulamos el impacto de todas las fuentes de iluminaciÃ³n analizadas
+                fragColor.rgb = lightDirResult + lightPointResult + lightSpotResult;
 
                 return fragColor;
             }
