@@ -92,7 +92,7 @@ Material:
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _PointLightPosition: {r: -118.93, g: 21.05, b: 3.3, a: 0}
+    - _PointLightPosition: {r: -108.29, g: 21.91, b: -8.85, a: 0}
     - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpecularColor: {r: 0.4339623, g: 0.39506945, b: 0.39506945, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
