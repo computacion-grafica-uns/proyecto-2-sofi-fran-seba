@@ -8,7 +8,6 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: mat_1 11
-  m_Shader: {fileID: 46, guid: 0000000000000000f000000000000000, type: 0}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -44,7 +43,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: d17c48edc1c7d0e4a8e512fe000d105a, type: 3}
+        m_Texture: {fileID: 2800000, guid: a95d04ce7c675564292ada3f4d37db18, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -99,7 +98,7 @@ Material:
     - _LightPos: {r: 0, g: 3, b: 0, a: 1}
     - _MaterialColor: {r: 1, g: 1, b: 1, a: 1}
     - _PointLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _PointLightPosition: {r: -118.93, g: 21.05, b: 3.3, a: 0}
+    - _PointLightPosition: {r: -115.44, g: 20.946, b: 2.568, a: 0}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDirection: {r: 0, g: 1, b: 0, a: 0}
     - _SpotLightPosition: {r: -103.825, g: 20.82, b: -2.64, a: 0}
