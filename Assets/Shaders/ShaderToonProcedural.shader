@@ -12,7 +12,7 @@
         _ToonSmoothness ("Suavizado de Bordes", Range(0.001, 0.1)) = 0.01
 
         [Header(Specular)]
-        _Glossiness ("Tamaño Brillo (Especular)", Range(0.01, 1.0)) = 0.1
+        _Glossiness ("Tamaï¿½o Brillo (Especular)", Range(0.01, 1.0)) = 0.1
         _SpecIntensity ("Intensidad Brillo", Range(0.0, 1.0)) = 0.5
 
         [Header(Rim Lighting)]
@@ -81,7 +81,7 @@
             float _RimPower;
             float _RimThreshold;
 
-            // Parámetros de la nueva línea fija
+            // Parï¿½metros de la nueva lï¿½nea fija
             float4 _OutlineColor;
             float _OutlineThickness;
 
@@ -108,7 +108,7 @@
                 return output;
             }
 
-            // Mantenemos intacta tu función de iluminación Toon por cada luz
+            // Mantenemos intacta tu funciï¿½n de iluminaciï¿½n Toon por cada luz
             float3 CalculateToonLight(float3 normal, float3 viewDir, float3 lightDir, float3 lightColor, float atten)
             {
                 float NdotL = dot(normal, lightDir);
@@ -139,20 +139,20 @@
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
                 
                 // ==========================================
-                // NUEVO CÁLCULO DE LÍNEA FIJA POR DERIVADAS DE PANTALLA
+                // NUEVO Cï¿½LCULO DE Lï¿½NEA FIJA POR DERIVADAS DE PANTALLA
                 // ==========================================
-                // Usamos fwidth para medir el cambio drástico de la normal en el espacio de la pantalla.
-                // Esto detecta bordes filosos geométricos y siluetas de forma procedural e independiente de la distancia.
+                // Usamos fwidth para medir el cambio drï¿½stico de la normal en el espacio de la pantalla.
+                // Esto detecta bordes filosos geomï¿½tricos y siluetas de forma procedural e independiente de la distancia.
                 float3 normalEdgeX = ddx(normal);
                 float3 normalEdgeY = ddy(normal);
                 float edgeDelta = length(normalEdgeX) + length(normalEdgeY);
                 
-                // Umbral adaptativo para pintar la línea fija nítida
+                // Umbral adaptativo para pintar la lï¿½nea fija nï¿½tida
                 float outlineThreshold = (1.01 - _OutlineThickness) * 0.2;
                 float outlineMask = step(edgeDelta, outlineThreshold);
 
                 // ==========================================
-                // CÁLCULO ACUMULADO DE LAS 3 LUCES
+                // Cï¿½LCULO ACUMULADO DE LAS 3 LUCES
                 // ==========================================
                 float3 lightingColor = float3(0,0,0);
 
@@ -223,16 +223,16 @@ Shader "Custom/ShaderToonProcedural"
         _DirLightColor ("Directional Light Color", Color) = (1, 1, 1, 1)
 
         [Header(Point Light Setup)]
-        _PointLightPos ("Point Light Position (XYZ)", Vector) = (0, 2, 0, 1)
-        _PointLightColor ("Point Light Color", Color) = (1, 1, 1, 1)
-        _PointLightRadius ("Point Light Radius", Range(0.1, 50.0)) = 10.0
+        _PointLightPosition ("Point Light Position", Vector) = (0, 2, 0, 1)
+        _PointLightColor ("Point Light Color", Color) = (1, 0, 0, 1)
+        _LightRange ("Light Range", Float) = 5.0
 
         [Header(Spot Light Setup)]
-        _SpotLightPos ("Spot Light Position (XYZ)", Vector) = (0, 5, 0, 1)
-        _SpotLightDir ("Spot Light Direction", Vector) = (0, -1, 0, 0)
-        _SpotLightColor ("Spot Light Color", Color) = (1, 1, 1, 1)
-        _SpotLightRange ("Spot Light Range", Range(0.1, 50.0)) = 15.0
-        _SpotLightAngle ("Spot Light Angle (Cos Outer)", Range(0.0, 1.0)) = 0.5
+        _SpotLightPosition ("Spot Light Position", Vector) = (0, 3, 0, 1)
+        _SpotLightDirection ("Spot Light Direction", Vector) = (0, -1, 0, 0)
+        _SpotLightColor ("Spot Light Color", Color) = (0, 0, 1, 1)
+        _Apertura ("Apertura (Angulo)", Range(0.0, 90.0)) = 30.0
+        _SpotRange ("Spot Range", Float) = 10.0
     }
     
     SubShader
@@ -275,24 +275,24 @@ Shader "Custom/ShaderToonProcedural"
             float _RimPower;
             float _RimThreshold;
 
-            // Parámetros del Batik Procedural
+            // ParÃ¡metros del Batik Procedural
             float _BatikScale;
             float _BatikIntensity;
             float _BatikContrast;
 
-            // Variables de Luces
+            // Variables de Luces corregidas para C#
             float4 _DirLightDirection;
             float4 _DirLightColor;
 
-            float4 _PointLightPos;
+            float4 _PointLightPosition;
             float4 _PointLightColor;
-            float _PointLightRadius;
+            float _LightRange;
 
-            float4 _SpotLightPos;
-            float4 _SpotLightDir;
+            float4 _SpotLightPosition;
+            float4 _SpotLightDirection;
             float4 _SpotLightColor;
-            float _SpotLightRange;
-            float _SpotLightAngle;
+            float _Apertura;
+            float _SpotRange;
 
             // --- Generador de Ruido Procedural Pseudo-Perlin de 3D para el efecto Batik ---
             float hash(float3 p)
@@ -323,21 +323,20 @@ Shader "Custom/ShaderToonProcedural"
                 return output;
             }
 
-            // Función Toon modificada para inyectar la distorsión orgánica Batik
+            // FunciÃ³n Toon unificada para procesar la atenuaciÃ³n de las luces con interferencia Batik
             float3 CalculateToonBatikLight(float3 normal, float3 viewDir, float3 lightDir, float3 lightColor, float atten, float batikNoise)
             {
                 // 1. DIFUSO TOON CON INTERFERENCIA BATIK
                 float NdotL = dot(normal, lightDir);
                 float halfLambert = NdotL * 0.5 + 0.5; 
                 
-                // Mezclamos la luz con el ruido matemático antes del escalonado (Cuantización)
-                // Esto deforma la frontera de la sombra creando las "manchas de teñido"
+                // Mezclamos la luz con el ruido matemÃ¡tico antes del escalonado
                 float lightWithNoise = lerp(halfLambert, halfLambert * batikNoise, _BatikIntensity);
 
                 float toonIntensity = floor(lightWithNoise * _Steps) / (_Steps - 1);
                 toonIntensity = smoothstep(_ToonThreshold - _ToonSmoothness, _ToonThreshold + _ToonSmoothness, toonIntensity);
                 
-                // Mezcla del color base y sombra distorsionada
+                // Mezcla el tinte de sombra con el color base segÃºn la intensidad de la luz recibida
                 float3 diffuseColor = lerp(_ShadowColor.rgb, _MainColor.rgb, toonIntensity * atten);
 
                 // 2. ESPECULAR ANIME
@@ -345,7 +344,7 @@ Shader "Custom/ShaderToonProcedural"
                 float NdotH = max(0.0, dot(normal, H));
                 float specIntensity = pow(NdotH, (1.0 - _Glossiness) * 128.0);
                 float specularToon = smoothstep(0.5 - 0.01, 0.5 + 0.01, specIntensity) * _SpecIntensity;
-                float3 finalSpecular = specularToon * lightColor * atten;
+                float3 finalSpecular = specularToon * atten;
 
                 // 3. RIM LIGHTING
                 float rimDot = 1.0 - max(0.0, dot(normal, viewDir));
@@ -362,48 +361,61 @@ Shader "Custom/ShaderToonProcedural"
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
                 
                 // ==========================================
-                // GENERACIÓN DE LAS MANCHAS DE COLOR (Batik)
+                // GENERACIÃ“N DE LAS MANCHAS DE COLOR (Batik)
                 // ==========================================
-                // Usamos la posición del mundo multiplicada por la escala para que el patrón sea tridimensional y fijo sobre el modelo
                 float3 batikCoords = i.worldPos * _BatikScale;
                 float rawNoise = noiseProcedural(batikCoords);
-                
-                // Ajustamos el contraste del ruido para dar un look de manchas de tinta/cera líquida mas definido
                 float batikPattern = saturate(pow(rawNoise, _BatikContrast) * 1.5);
 
-                // ==========================================
-                // CÁLCULO ACUMULADO DE LAS 3 LUCES (Con Sombreado Batik)
-                // ==========================================
+                // Acumulador lumÃ­nico final
                 float3 finalColor = float3(0,0,0);
 
-                // 1. Luz Direccional
-                float3 dirLightDir = normalize(-_DirLightDirection.xyz);
-                finalColor += CalculateToonBatikLight(normal, viewDir, dirLightDir, _DirLightColor.rgb, 1.0, batikPattern);
+                // ==========================================
+                // 1. LUZ DIRECCIONAL
+                // ==========================================
+                float3 L1 = normalize(-_DirLightDirection.xyz);
+                finalColor += CalculateToonBatikLight(normal, viewDir, L1, _DirLightColor.rgb, 1.0, batikPattern);
 
-                // 2. Luz Puntual
-                float3 pointLightVec = _PointLightPos.xyz - i.worldPos;
-                float pointDist = length(pointLightVec);
-                float3 pointLightDir = normalize(pointLightVec);
-                float pointAtten = saturate(1.0 - (pointDist / _PointLightRadius));
-                pointAtten *= pointAtten; 
-                finalColor += CalculateToonBatikLight(normal, viewDir, pointLightDir, _PointLightColor.rgb, pointAtten, batikPattern);
+                // ==========================================
+                // 2. LUZ PUNTUAL
+                // ==========================================
+                float3 toPoint = _PointLightPosition.xyz - i.worldPos;
+                float distancePoint = length(toPoint);
+                float3 L2 = normalize(toPoint);
+                
+                float attenPoint = max(0.0, 1.0 - (distancePoint / max(0.001, _LightRange)));
+                attenPoint *= attenPoint; // CaÃ­da cuadrÃ¡tica suave
+                
+                finalColor += CalculateToonBatikLight(normal, viewDir, L2, _PointLightColor.rgb, attenPoint, batikPattern);
 
-                // 3. Luz Spot
-                float3 spotLightVec = _SpotLightPos.xyz - i.worldPos;
-                float spotDist = length(spotLightVec);
-                float3 spotLightDir = normalize(spotLightVec);
-                float spotDistAtten = saturate(1.0 - (spotDist / _SpotLightRange));
-                spotDistAtten *= spotDistAtten;
-                float3 currentSpotDir = normalize(_SpotLightDir.xyz);
-                float cosAngle = dot(-spotLightDir, currentSpotDir);
-                float spotConeAtten = smoothstep(_SpotLightAngle, _SpotLightAngle + 0.1, cosAngle);
-                float spotAtten = spotDistAtten * spotConeAtten;
-                finalColor += CalculateToonBatikLight(normal, viewDir, spotLightDir, _SpotLightColor.rgb, spotAtten, batikPattern);
+                // ==========================================
+                // 3. LUZ FOCAL (Spot Light Corregida)
+                // ==========================================
+                float3 toSpot = _SpotLightPosition.xyz - i.worldPos;
+                float distanceSpot = length(toSpot);
+                float3 L3 = normalize(toSpot); // Hacia la bombilla
+                
+                float3 spotDir = normalize(-_SpotLightDirection.xyz); // DirecciÃ³n al frente del cono
+                
+                // Comparamos el vector corregido de la luz al objeto con el frente del foco
+                float cosCurrentAngle = dot(normalize(i.worldPos - _SpotLightPosition.xyz), normalize(_SpotLightDirection.xyz));
+                float cosAperture = cos(radians(_Apertura));
+
+                if (cosCurrentAngle > cosAperture)
+                {
+                    float attenSpot = max(0.0, 1.0 - (distanceSpot / max(0.001, _SpotRange)));
+                    attenSpot *= attenSpot;
+                    
+                    // Suavizado en el contorno del cono animÃ©
+                    float spotConeSmoothing = smoothstep(cosAperture, cosAperture + 0.05, cosCurrentAngle);
+                    float spotAtten = attenSpot * spotConeSmoothing;
+                    
+                    finalColor += CalculateToonBatikLight(normal, viewDir, L3, _SpotLightColor.rgb, spotAtten, batikPattern);
+                }
 
                 // ==========================================
                 // TINTE EXTRA AL COLOR GENERAL
                 // ==========================================
-                // Un sutil toque final que mezcla el patrón de manchas directamente sobre las texturas planas
                 finalColor = lerp(finalColor, finalColor * _ShadowColor.rgb, (1.0 - batikPattern) * _BatikIntensity * 0.3);
 
                 return float4(finalColor, _MainColor.a);
