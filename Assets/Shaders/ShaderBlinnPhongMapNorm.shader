@@ -91,8 +91,7 @@ Shader "Custom/ShaderBlinnPhongNormalMap"
                 float spec = pow(NdotH, _Shininess);
                 float3 specular = spec * _SpecularColor.rgb;
 
-                // --- FILTRO DEL TERMINADOR SUAVE ---
-                // Al igual que en Cook-Torrance, usamos smoothstep para evitar que
+                // --- FILTRO DEL TERMINADOR SUAVE --
                 // el brillo especular flote de manera irreal en el lado oscuro del relieve.
                 float terminadorMask = smoothstep(0.0, 0.05, dotNL);
                 specular *= terminadorMask;

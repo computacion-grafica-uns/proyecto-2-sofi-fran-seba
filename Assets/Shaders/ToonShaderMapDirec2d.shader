@@ -29,6 +29,7 @@ Shader "Custom/ToonShaderMapeoDirec2d"
             
             float _Glossiness;
             float4 _LightPos;
+
             float _OutlineThickness; // Variable global del grosor
 
             struct appdata {
