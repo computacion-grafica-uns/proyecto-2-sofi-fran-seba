@@ -72,7 +72,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightRange: 5
+    - _LightRange: 10
     - _LineDensity: 10
     - _LineThickness: 0.5
     - _Metallic: 0
@@ -90,7 +90,7 @@ Material:
     - _SpecularHighlights: 1
     - _SpotLightAngle: 0.5
     - _SpotLightRange: 15
-    - _SpotRange: 10
+    - _SpotRange: 100
     - _SrcBlend: 1
     - _Steps: 2
     - _ToonSmoothness: 0.1
@@ -107,12 +107,12 @@ Material:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
-    - _PointLightPosition: {r: -111.04, g: 8.43, b: 6.474, a: 0}
+    - _PointLightPosition: {r: -115.44, g: 20.946, b: -6.54, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.2, g: 0.29071903, b: 0.4, a: 1}
-    - _SpotLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _SpotLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
     - _SpotLightDir: {r: 0, g: -1, b: 0, a: 0}
-    - _SpotLightDirection: {r: -0.88503826, g: -0.39492294, b: 0.24646166, a: 0}
+    - _SpotLightDirection: {r: -0.91374725, g: -0.40628314, b: 0, a: 0}
     - _SpotLightPos: {r: 0, g: 5, b: 0, a: 1}
-    - _SpotLightPosition: {r: -108.44, g: 12.03, b: -4.42, a: 0}
+    - _SpotLightPosition: {r: -105.61, g: 13.15, b: 5.85, a: 0}
   m_BuildTextureStacks: []

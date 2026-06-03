@@ -16,7 +16,7 @@ Shader "Custom/ToonShaderMapNorm_MultiLight"
         [Header(Point Light Setup)]
         _PointLightPosition ("Point Light Position", Vector) = (0, 2, 0, 1)
         _PointLightColor ("Point Light Color", Color) = (1, 0, 0, 1)
-        _LightRange ("Light Range", Float) = 5.0
+        _LightRange ("Light Range", Float) = 10.0
         
         [Header(Spot Light Setup)]
         _SpotLightPosition ("Spot Light Position", Vector) = (0, 3, 0, 1)
