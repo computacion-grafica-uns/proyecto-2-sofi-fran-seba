@@ -1,126 +1,230 @@
 using UnityEngine;
 
-public class ControlCamaraOrbital : MonoBehaviour
+public class ControlCamaraCompleto : MonoBehaviour
 {
-    [Header("Configuración de Objetivos")]
-    [SerializeField] private Transform[] teteras;
+    public enum ModoCamara { OrbitaCerca, OrbitaLejos, PrimeraPersona }
+
+    [Header("Estado de la Cámara")]
+    [SerializeField] private ModoCamara modoActual = ModoCamara.OrbitaLejos;
+    private Camera componenteCamara;
+
+    [Header("Configuración de Objetivos (TAB)")]
+    [SerializeField] private Transform[] objetivos;
     private int indiceActual = 0;
-    private bool vistaGeneralActiva = false;
 
-    [Header("Controles de Orbita y Zoom")]
-    [SerializeField] private float distancia = 5.0f;
-    [SerializeField] private float velocidadZoom = 2.0f;
-    [SerializeField] private float distanciaMinima = 1.5f;
-    [SerializeField] private float distanciaMaxima = 35.0f;
-
+    [Header("Controles Generales")]
+    [SerializeField] private float velocidadZoom = 4.0f;
     [SerializeField] private float velocidadRotacion = 5.0f;
-    private float anguloX = 0.0f;
-    private float anguloY = 20.0f;
-
-    [Header("Ajuste de Vista General (Tecla F)")]
-    [Tooltip("Qué tan atrás se para la cámara para ver todo el estante")]
-    [SerializeField] private float distanciaVistaGeneral = 16.0f;
-    [Tooltip("Inclinación vertical de la cámara en la vista general")]
-    [SerializeField] private float inclinacionVistaGeneral = 10.0f;
-    [Tooltip("Rotación en el eje Y para mirar de frente si el estante está rotado en el mapa")]
-    [SerializeField] private float rotacionYVistaGeneral = -90.0f; // <-- NUEVO: Ajustalo según tu eje
-
-    [Header("Suavizado")]
     [SerializeField] private float velocidadLerp = 5.0f;
+
+    [Header("Modo Cerca (Objetivos)")]
+    [SerializeField] private float distanciaCerca = 4.0f;
+    [SerializeField] private float distMinCerca = 1.5f;
+    [SerializeField] private float distMaxCerca = 10.0f;
+    [SerializeField] private float fovCerca = 60.0f;
+
+    [Header("Modo Lejos (Vista General F)")]
+    [SerializeField] private float distanciaLejos = 16.0f;
+    [SerializeField] private float distMinLejos = 10.0f;
+    [SerializeField] private float distMaxLejos = 40.0f;
+    [SerializeField] private float fovLejos = 40.0f;
+    [SerializeField] private float rotacionYVistaGeneral = -90.0f;
+
+    [Header("Modo Primera Persona (Tecla P + WASD)")]
+    [SerializeField] private float velocidadCaminar = 5.0f;
+    [SerializeField] private float sensibilidadMouseFP = 2.0f;
+    [SerializeField] private float fovPrimeraPersona = 65.0f;
+    [Tooltip("Velocidad para subir con Espacio o bajar con Ctrl")]
+    [SerializeField] private float velocidadEjeY = 4.0f; // <-- NUEVO
+
+    private float anguloX_Cerca = 0.0f;
+    private float anguloY_Cerca = 12.0f;
+    private float anguloX_Lejos = 0.0f;
+    private float anguloY_Lejos = 15.0f;
+
+    private float fpRotacionX = 0.0f;
+    private float fpRotacionY = 0.0f;
 
     void Start()
     {
-        // Forzamos que la órbita inicial de la tetera arranque con el mismo desfasaje de tu eje
-        anguloX = rotacionYVistaGeneral;
-        anguloY = 12.0f;
-
-        if (teteras.Length == 0)
-        {
-            Debug.LogWarning("Por favor, asigná las teteras en el Inspector.");
-        }
+        componenteCamara = GetComponent<Camera>();
+        anguloX_Cerca = rotacionYVistaGeneral;
+        anguloX_Lejos = rotacionYVistaGeneral;
+        ActualizarEstadoCursor();
     }
 
     void Update()
     {
-        // 1. Tecla F: Alternar Vista General automática
+        // Tecla F: Alterna entre Órbita de Cerca (Individual) u Órbita de Lejos (General)
         if (Input.GetKeyDown(KeyCode.F))
         {
-            vistaGeneralActiva = !vistaGeneralActiva;
-            Debug.Log(vistaGeneralActiva ? "Vista General Activa" : "Volviendo a enfoque individual");
+            if (modoActual == ModoCamara.OrbitaLejos)
+                modoActual = ModoCamara.OrbitaCerca;
+            else
+                modoActual = ModoCamara.OrbitaLejos;
+
+            ActualizarEstadoCursor();
         }
 
-        // 2. Detección de TAB / SHIFT+TAB
-        if (!vistaGeneralActiva && Input.GetKeyDown(KeyCode.Tab))
+        // Tecla P: Entra/Sal de Primera Persona libre
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            if (modoActual != ModoCamara.PrimeraPersona)
+            {
+                fpRotacionX = transform.eulerAngles.y;
+                fpRotacionY = transform.eulerAngles.x;
+                modoActual = ModoCamara.PrimeraPersona;
+            }
+            else
+            {
+                modoActual = ModoCamara.OrbitaCerca;
+            }
+
+            ActualizarEstadoCursor();
+        }
+
+        // Navegación de objetivos con TAB / SHIFT+TAB
+        if (modoActual == ModoCamara.OrbitaCerca && Input.GetKeyDown(KeyCode.Tab))
         {
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
                 indiceActual--;
-                if (indiceActual < 0) indiceActual = teteras.Length - 1;
+                if (indiceActual < 0) indiceActual = objetivos.Length - 1;
             }
             else
             {
                 indiceActual++;
-                if (indiceActual >= teteras.Length) indiceActual = 0;
+                if (indiceActual >= objetivos.Length) indiceActual = 0;
             }
         }
 
-        // 3. Controles de Mouse en modo individual
-        if (!vistaGeneralActiva && teteras.Length > 0 && teteras[indiceActual] != null)
+        // Captura de Inputs según el modo activo
+        float entradaZoom = Input.GetAxis("Mouse ScrollWheel");
+
+        if (modoActual == ModoCamara.PrimeraPersona)
         {
-            float entradaZoom = Input.GetAxis("Mouse ScrollWheel");
-            distancia -= entradaZoom * velocidadZoom;
-            distancia = Mathf.Clamp(distancia, distanciaMinima, distanciaMaxima);
+            fpRotacionX += Input.GetAxis("Mouse X") * sensibilidadMouseFP;
+            fpRotacionY -= Input.GetAxis("Mouse Y") * sensibilidadMouseFP;
+            fpRotacionY = Mathf.Clamp(fpRotacionY, -85f, 85f);
+
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                Cursor.lockState = (Cursor.lockState == CursorLockMode.Locked) ? CursorLockMode.None : CursorLockMode.Locked;
+                Cursor.visible = (Cursor.lockState != CursorLockMode.Locked);
+            }
+        }
+        else if (modoActual == ModoCamara.OrbitaLejos)
+        {
+            distanciaLejos -= entradaZoom * velocidadZoom;
+            distanciaLejos = Mathf.Clamp(distanciaLejos, distMinLejos, distMaxLejos);
 
             if (Input.GetMouseButton(1))
             {
-                anguloX += Input.GetAxis("Mouse X") * velocidadRotacion;
-                anguloY -= Input.GetAxis("Mouse Y") * velocidadRotacion;
-                anguloY = Mathf.Clamp(anguloY, -20f, 80f);
+                anguloX_Lejos += Input.GetAxis("Mouse X") * velocidadRotacion;
+                anguloY_Lejos -= Input.GetAxis("Mouse Y") * velocidadRotacion;
+                anguloY_Lejos = Mathf.Clamp(anguloY_Lejos, -10f, 60f);
+            }
+        }
+        else if (modoActual == ModoCamara.OrbitaCerca)
+        {
+            distanciaCerca -= entradaZoom * velocidadZoom;
+            distanciaCerca = Mathf.Clamp(distanciaCerca, distMinCerca, distMaxCerca);
+
+            if (Input.GetMouseButton(1))
+            {
+                anguloX_Cerca += Input.GetAxis("Mouse X") * velocidadRotacion;
+                anguloY_Cerca -= Input.GetAxis("Mouse Y") * velocidadRotacion;
+                anguloY_Cerca = Mathf.Clamp(anguloY_Cerca, -20f, 80f);
             }
         }
     }
 
     void LateUpdate()
     {
-        if (teteras.Length == 0) return;
+        // CONTROL CLAVE: Si el arreglo está vacío o no asignado, salimos para que no tire error NaN
+        if (objetivos == null || objetivos.Length == 0) return;
 
-        Vector3 targetPos = Vector3.zero;
-        Quaternion targetRot = Quaternion.identity;
+        Vector3 targetPos = transform.position;
+        Quaternion targetRot = transform.rotation;
+        float targetFOV = fovCerca;
 
-        if (vistaGeneralActiva)
+        if (modoActual == ModoCamara.PrimeraPersona)
         {
-            // Calculamos el centro geométrico real de las teteras
-            Vector3 centroAcumulado = Vector3.zero;
-            int contadorValidas = 0;
+            targetRot = Quaternion.Euler(fpRotacionY, fpRotacionX, 0.0f);
+            transform.rotation = targetRot;
 
-            for (int k = 0; k < teteras.Length; k++)
+            // Desplazamiento WASD plano
+            float moverX = Input.GetAxis("Horizontal");
+            float moverZ = Input.GetAxis("Vertical");
+
+            Vector3 adelante = transform.forward;
+            Vector3 derecha = transform.right;
+            adelante.y = 0f;
+            derecha.y = 0f;
+            adelante.Normalize();
+            derecha.Normalize();
+
+            Vector3 direccionHoriz = (adelante * moverZ) + (derecha * moverX);
+
+            // --- NUEVO: Cálculo del movimiento vertical libre (Eje Y) ---
+            float moverY = 0f;
+            if (Input.GetKey(KeyCode.Space))
             {
-                if (teteras[k] != null)
-                {
-                    centroAcumulado += teteras[k].position;
-                    contadorValidas++;
-                }
+                moverY = 1f; // Ascender
+            }
+            else if (Input.GetKey(KeyCode.LeftControl))
+            {
+                moverY = -1f; // Descender
             }
 
-            Vector3 centroReal = (contadorValidas > 0) ? (centroAcumulado / contadorValidas) : Vector3.zero;
+            // Aplicamos ambos movimientos combinados
+            transform.position += direccionHoriz * velocidadCaminar * Time.deltaTime;
+            transform.position += Vector3.up * moverY * velocidadEjeY * Time.deltaTime;
 
-            // CORRECCIÓN: Aplicamos la rotación en Y que configuramos para tu eje X
-            targetRot = Quaternion.Euler(inclinacionVistaGeneral, rotacionYVistaGeneral, 0f);
+            if (componenteCamara != null) componenteCamara.fieldOfView = fovPrimeraPersona;
+            return;
+        }
 
-            // Nos posicionamos hacia atrás en base a la nueva rotación del estante
-            targetPos = centroReal - (targetRot * Vector3.forward * distanciaVistaGeneral);
+        if (modoActual == ModoCamara.OrbitaLejos)
+        {
+            Vector3 centroAcumulado = Vector3.zero;
+            for (int k = 0; k < objetivos.Length; k++)
+            {
+                centroAcumulado += objetivos[k].position;
+            }
+            Vector3 centroReal = centroAcumulado / objetivos.Length;
+
+            targetRot = Quaternion.Euler(anguloY_Lejos, anguloX_Lejos, 0f);
+            targetPos = centroReal - (targetRot * Vector3.forward * distanciaLejos);
+            targetFOV = fovLejos;
+        }
+        else if (modoActual == ModoCamara.OrbitaCerca)
+        {
+            targetRot = Quaternion.Euler(anguloY_Cerca, anguloX_Cerca, 0f);
+            targetPos = objetivos[indiceActual].position - (targetRot * Vector3.forward * distanciaCerca);
+            targetFOV = fovCerca;
+        }
+
+        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * velocidadLerp);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * velocidadLerp);
+
+        if (componenteCamara != null)
+        {
+            componenteCamara.fieldOfView = Mathf.Lerp(componenteCamara.fieldOfView, targetFOV, Time.deltaTime * velocidadLerp);
+        }
+    }
+
+    private void ActualizarEstadoCursor()
+    {
+        if (modoActual == ModoCamara.PrimeraPersona)
+        {
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
         }
         else
         {
-            // Modo Órbita Individual
-            if (teteras[indiceActual] == null) return;
-
-            targetRot = Quaternion.Euler(anguloY, anguloX, 0);
-            targetPos = teteras[indiceActual].position - (targetRot * Vector3.forward * distancia);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
-
-        // Interpolación fluida
-        transform.position = Vector3.Lerp(transform.position, targetPos, Time.deltaTime * velocidadLerp);
-        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, Time.deltaTime * velocidadLerp);
     }
 }
