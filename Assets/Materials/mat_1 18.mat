@@ -65,6 +65,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Apertura: 30
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
@@ -73,6 +74,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.62
     - _GlossyReflections: 1
+    - _LightRange: 5
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
@@ -81,12 +83,20 @@ Material:
     - _Roughness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpotRange: 10
     - _SrcBlend: 1
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
+    - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightPos: {r: 0, g: 3, b: 0, a: 1}
     - _MaterialColor: {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 1}
+    - _PointLightColor: {r: 1, g: 0, b: 0, a: 1}
+    - _PointLightPosition: {r: 1.983, g: 1.599, b: -1.326, a: 0}
+    - _SpotLightColor: {r: 0, g: 0, b: 1, a: 1}
+    - _SpotLightDirection: {r: 0.39683464, g: -0.07867581, b: -0.91451216, a: 0}
+    - _SpotLightPosition: {r: -0.058, g: 1.119, b: -0.035, a: 0}
   m_BuildTextureStacks: []

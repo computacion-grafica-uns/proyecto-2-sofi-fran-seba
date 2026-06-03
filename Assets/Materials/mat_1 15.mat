@@ -61,6 +61,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Apertura: 30
     - _BatikContrast: 1.8
     - _BatikIntensity: 0.6
     - _BatikScale: 25
@@ -71,6 +72,7 @@ Material:
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
+    - _LightRange: 5
     - _LineDensity: 10
     - _LineThickness: 0.5
     - _Metallic: 0
@@ -88,6 +90,7 @@ Material:
     - _SpecularHighlights: 1
     - _SpotLightAngle: 0.5
     - _SpotLightRange: 15
+    - _SpotRange: 10
     - _SrcBlend: 1
     - _Steps: 2
     - _ToonSmoothness: 0.1
@@ -104,9 +107,12 @@ Material:
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
     - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
     - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
+    - _PointLightPosition: {r: 1.983, g: 1.599, b: -1.326, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}
     - _ShadowColor: {r: 0.2, g: 0.29071903, b: 0.4, a: 1}
     - _SpotLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _SpotLightDir: {r: 0, g: -1, b: 0, a: 0}
+    - _SpotLightDirection: {r: 0.39683464, g: -0.07867581, b: -0.91451216, a: 0}
     - _SpotLightPos: {r: 0, g: 5, b: 0, a: 1}
+    - _SpotLightPosition: {r: -0.058, g: 1.119, b: -0.035, a: 0}
   m_BuildTextureStacks: []
