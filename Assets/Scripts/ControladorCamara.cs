@@ -86,6 +86,7 @@ public class ControlCamaraCompleto : MonoBehaviour
         // Navegación de objetivos con TAB / SHIFT+TAB
         if (modoActual == ModoCamara.OrbitaCerca && Input.GetKeyDown(KeyCode.Tab))
         {
+            Debug.Log("hola pepe");
             if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
             {
                 indiceActual--;
