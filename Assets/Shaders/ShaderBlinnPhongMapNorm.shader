@@ -110,6 +110,7 @@ Shader "Custom/ShaderBlinnPhongNormalMap"
                 }
             }
 
+
             fixed4 frag (v2f i) : SV_Target {
                 // 1. Reconstruir la matriz Tangent-to-World para transformar la normal del mapa
                 float3 T = normalize(i.worldTangent);

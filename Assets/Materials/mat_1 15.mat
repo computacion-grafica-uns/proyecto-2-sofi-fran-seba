@@ -105,7 +105,7 @@ Material:
     - _LineColor: {r: 0, g: 0, b: 0, a: 1}
     - _MainColor: {r: 0.5849056, g: 0.52696687, b: 0.52696687, a: 1}
     - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
+    - _PointLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
     - _PointLightPosition: {r: 1.983, g: 1.599, b: -1.326, a: 0}
     - _RimColor: {r: 1, g: 1, b: 1, a: 1}

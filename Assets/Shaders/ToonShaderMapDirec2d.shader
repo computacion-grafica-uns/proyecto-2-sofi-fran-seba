@@ -42,6 +42,7 @@ Shader "Custom/ToonShaderMapeoDirec2d"
             float4 _MainTex_ST;
             
             float _Glossiness;
+
             float _OutlineThickness;
 
             // Variables de Luces
