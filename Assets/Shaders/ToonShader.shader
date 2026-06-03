@@ -505,19 +505,23 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 float3 normal = normalize(i.normal_w);
                 float3 viewDir = normalize(_WorldSpaceCameraPos - i.worldPos);
                 
-                float totalDiffuseLight = 0.0;
                 float3 totalSpecular = float3(0,0,0);
                 float3 extraLightColorAdditive = float3(0,0,0);
 
                 // ==========================================
-                // 1. LUZ DIRECCIONAL (Base)
+                // 1. LUZ DIRECCIONAL (Aporte Base)
                 // ==========================================
                 float3 dirLightDir = normalize(-_DirLightDirection.xyz);
                 float diffDir, specDir;
                 GetToonLightMask(normal, viewDir, dirLightDir, 1.0, diffDir, specDir);
                 
-                totalDiffuseLight += diffDir;
+                // Teñimos el especular direccional con el color de su luz
                 totalSpecular += specDir * _DirLightColor.rgb;
+
+                // Calculamos la base difusa (Luz vs Sombra) usando el color direccional como modulador
+                float3 baseDiffuse = lerp(_ShadowColor.rgb, _MainColor.rgb, saturate(diffDir));
+                // Si apagás la luz direccional por completo, la base colapsará a la sombra (_ShadowColor)
+                float3 finalDiffuseBase = baseDiffuse * _DirLightColor.rgb;
 
                 // ==========================================
                 // 2. LUZ PUNTUAL (Point Light)
@@ -532,57 +536,49 @@ Shader "Custom/ToonShader_Anime_SpotFixed"
                 float diffPoint, specPoint;
                 GetToonLightMask(normal, viewDir, pointLightDir, pointAtten, diffPoint, specPoint);
                 
-                totalDiffuseLight += diffPoint; 
                 totalSpecular += specPoint * _PointLightColor.rgb;
-                extraLightColorAdditive += diffPoint * _PointLightColor.rgb;
+                // Inyectamos el color aditivo difuso de la luz puntual multiplicado por el tinte del objeto
+                extraLightColorAdditive += diffPoint * _PointLightColor.rgb * _MainColor.rgb;
 
                 // ==========================================
-                // 3. LUZ FOCAL (Spot Light - COMPLETAMENTE FIXEADA)
+                // 3. LUZ FOCAL (Spot Light)
                 // ==========================================
-                // Vector del foco hacia el fragmento del objeto
                 float3 spotLightVec = i.worldPos - _SpotLightPosition.xyz; 
                 float spotDist = length(spotLightVec);
                 float3 dirToObj = normalize(spotLightVec);
-                
-                // Vector desde el objeto HACIA la luz (para el sombreado NdotL)
                 float3 lightToSpotDir = -dirToObj; 
 
-                // Atenuación por distancia (usando el nombre global correcto)
                 float spotDistAtten = saturate(1.0 - (spotDist / max(0.001, _SpotLightRange)));
                 spotDistAtten *= spotDistAtten;
 
-                // Usamos la variable global real que actualiza tu script de C#
                 float3 currentSpotDir = normalize(_SpotLightDirection.xyz);
-                
-                // Producto punto entre el frente de la linterna y la dirección al objeto
                 float cosAngle = dot(dirToObj, currentSpotDir);
                 
-                // Cono de luz Toon nítido
                 float spotConeAtten = smoothstep(_SpotLightAngle - 0.05, _SpotLightAngle + 0.05, cosAngle);
                 float spotAtten = spotDistAtten * spotConeAtten;
 
                 float diffSpot, specSpot;
-                // Pasamos "lightToSpotDir" para calcular las bandas de luz correctamente
                 GetToonLightMask(normal, viewDir, lightToSpotDir, spotAtten, diffSpot, specSpot);
                 
-                totalDiffuseLight += diffSpot;
                 totalSpecular += specSpot * _SpotLightColor.rgb;
-                extraLightColorAdditive += diffSpot * _SpotLightColor.rgb;
+                // Inyectamos el color aditivo difuso del reflector multiplicado por el tinte del objeto
+                extraLightColorAdditive += diffSpot * _SpotLightColor.rgb * _MainColor.rgb;
 
                 // ==========================================
-                // COMPOSICIÓN FINAL DEL COLOR
+                // 4. RIM LIGHTING (Silueta interior)
                 // ==========================================
-                totalDiffuseLight = saturate(totalDiffuseLight);
-
-                float3 baseDiffuse = lerp(_ShadowColor.rgb, _MainColor.rgb, totalDiffuseLight);
-                float3 finalDiffuse = baseDiffuse + extraLightColorAdditive * _MainColor.rgb;
-
                 float rimDot = 1.0 - max(0.0, dot(normal, viewDir));
                 float rimIntensity = pow(rimDot, _RimPower);
-                rimIntensity = smoothstep(_RimThreshold - 0.05, _RimThreshold + 0.05, rimIntensity) * totalDiffuseLight;
+                // Hacemos que responda un poco a las luces extras también si la direccional cae
+                float factorLuzRim = saturate(diffDir + length(extraLightColorAdditive));
+                rimIntensity = smoothstep(_RimThreshold - 0.05, _RimThreshold + 0.05, rimIntensity) * factorLuzRim;
                 float3 finalRim = rimIntensity * _RimColor.rgb;
 
-                float3 finalColor = (finalDiffuse + totalSpecular + finalRim) * _DirLightColor.rgb;
+                // ==========================================
+                // COMPOSICIÓN FINAL DESACOPLADA
+                // ==========================================
+                // Sumamos la base (afectada por dirLight), las luces dinámicas aditivas, los brillos y el Rim
+                float3 finalColor = finalDiffuseBase + extraLightColorAdditive + totalSpecular + finalRim;
 
                 return float4(finalColor, _MainColor.a);
             }

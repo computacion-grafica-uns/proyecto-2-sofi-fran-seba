@@ -6,7 +6,9 @@ public class ControladorLuzSpot : MonoBehaviour
 {
     public Material[] Materiales_De_La_Escena_Luz_Spot ;
 
-    // Start is called before the first frame update
+    [Header("Estado de la Luz")]
+    [SerializeField] private Color colorEncendido = new Color(255f / 255f, 197f / 255f, 143f / 255f); //Color calido
+    private bool luzEstaEncendida = true;
     void Start()
     {
         
@@ -20,5 +22,33 @@ public class ControladorLuzSpot : MonoBehaviour
             mat.SetVector("_SpotLightPosition", transform.position);
             mat.SetVector("_SpotLightDirection", transform.up); 
         }
+
+        // Detecta la tecla presionada
+        if (Input.GetKeyDown(KeyCode.F3))
+        {
+            AlternarLuzPuntual();
+        }
     }
+
+    private void AlternarLuzPuntual()
+    {
+        // Invertimos el estado de la luz
+        luzEstaEncendida = !luzEstaEncendida;
+
+        // Definimos qué color mandar según el estado actual
+        Color colorAEnviar = luzEstaEncendida ? colorEncendido : Color.black;
+
+        // Recorremos la lista de materiales y actualizamos la propiedad del shader
+        foreach (Material mat in Materiales_De_La_Escena_Luz_Spot)
+        {
+            if (mat != null)
+            {
+                // _DirLightColor es el nombre exacto de la variable en tus shaders Toon
+                mat.SetColor("_SpotLightColor", colorAEnviar);
+            }
+        }
+
+        // Feedback opcional en la consola para saber si funcionó
+        Debug.Log("-Luz Spot: " + (luzEstaEncendida ? "ENCENDIDA" : "APAGADA"));
+    }   
 }
