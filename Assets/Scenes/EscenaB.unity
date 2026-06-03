@@ -365,6 +365,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -446,6 +447,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 64e1ace42eea19e4c88aaa6179c5e4b4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modoActual: 1
+  objetivos:
+  - {fileID: 7499656469664830932}
+  velocidadZoom: 4
+  velocidadRotacion: 5
+  velocidadLerp: 5
+  distanciaCerca: 4
+  distMinCerca: 1.5
+  distMaxCerca: 10
+  fovCerca: 60
+  distanciaLejos: 16
+  distMinLejos: 10
+  distMaxLejos: 40
+  fovLejos: 40
+  rotacionYVistaGeneral: -90
+  velocidadCaminar: 5
+  sensibilidadMouseFP: 2
+  fovPrimeraPersona: 65
+  velocidadEjeY: 4
 --- !u!23 &1948795982786
 MeshRenderer:
   m_ObjectHideFlags: 0
