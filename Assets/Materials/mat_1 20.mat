@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_1 1
-  m_Shader: {fileID: 4800000, guid: 66ad06a9a8cfba64d9d5dd2be6fff1b8, type: 3}
+  m_Name: mat_1 20
+  m_Shader: {fileID: 4800000, guid: bbd155d61642cb443a2add419bcdadc1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 6d645c3b53b90f949853e802dbcf3f76, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -56,6 +56,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _ParallaxMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -74,7 +78,7 @@ Material:
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
-    - _Shininess: 128
+    - _Shininess: 32
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpotRange: 100
@@ -82,15 +86,16 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.7924528, g: 0.17568529, b: 0.6228232, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightDirection: {r: -100, g: -60, b: 3.6, a: 0.2}
+    - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.5471698, g: 0.34949622, b: 0.22196496, a: 1}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
     - _PointLightColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PointLightPosition: {r: 3.298, g: 1.66, b: -0.956, a: 0}
-    - _SpecColor: {r: 0, g: 0, b: 0, a: 0}
+    - _PointLightPosition: {r: -773, g: -202, b: -576, a: 0}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 0.4339623, g: 0.39506945, b: 0.39506945, a: 1}
     - _SpotLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _SpotLightDirection: {r: 0.39683464, g: -0.07867581, b: -0.91451216, a: 0}
-    - _SpotLightPosition: {r: 1.06, g: 1.598, b: 0.409, a: 0}
+    - _SpotLightDirection: {r: -0.9324192, g: 0.36137867, b: 0, a: 0}
+    - _SpotLightPosition: {r: -113.6, g: 10.74, b: -0.87, a: 0}
   m_BuildTextureStacks: []

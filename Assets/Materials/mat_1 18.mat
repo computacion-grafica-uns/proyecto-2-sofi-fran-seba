@@ -89,14 +89,14 @@ Material:
     - _ZWrite: 1
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
-    - _DirLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _LightPos: {r: 0, g: 3, b: 0, a: 1}
     - _MaterialColor: {r: 0.9716981, g: 0.9716981, b: 0.9716981, a: 1}
     - _PointLightColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PointLightPosition: {r: -115.44, g: 20.946, b: -6.54, a: 0}
+    - _PointLightPosition: {r: 3.298, g: 1.66, b: -0.956, a: 0}
     - _SpotLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _SpotLightDirection: {r: -0.91374725, g: -0.40628314, b: 0, a: 0}
-    - _SpotLightPosition: {r: -105.61, g: 13.15, b: 5.85, a: 0}
+    - _SpotLightDirection: {r: 0.39683464, g: -0.07867581, b: -0.91451216, a: 0}
+    - _SpotLightPosition: {r: 1.06, g: 1.598, b: 0.409, a: 0}
   m_BuildTextureStacks: []
