@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: mat_1 9
-  m_Shader: {fileID: 4800000, guid: 4a44cad12ceca204abfe46c8b64c7c41, type: 3}
+  m_Name: Prueba material
+  m_Shader: {fileID: 4800000, guid: bbd155d61642cb443a2add419bcdadc1, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -44,7 +44,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 0}
+        m_Texture: {fileID: 2800000, guid: 726cc13d9e9e891489f450fbfa4f090e, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -59,6 +59,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SpecGlossMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
     - _Apertura: 30
@@ -67,27 +71,18 @@ Material:
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.9
+    - _Glossiness: 0.5
     - _GlossyReflections: 1
-    - _LightRange: 5
+    - _LightRange: 10
     - _Metallic: 0
     - _Mode: 0
     - _OcclusionStrength: 1
-    - _OutlineWidth: 0.015
     - _Parallax: 0.02
-    - _PointLightRadius: 10
-    - _RimPower: 3
-    - _RimThreshold: 0.5
+    - _Shininess: 32
     - _SmoothnessTextureChannel: 0
-    - _SpecIntensity: 0.5
     - _SpecularHighlights: 1
-    - _SpotLightAngle: 0.925
-    - _SpotLightRange: 30
     - _SpotRange: 100
     - _SrcBlend: 1
-    - _Steps: 2
-    - _ToonSmoothness: 0.001
-    - _ToonThreshold: 0.8
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
@@ -95,16 +90,12 @@ Material:
     - _DirLightColor: {r: 1, g: 1, b: 1, a: 1}
     - _DirLightDirection: {r: 0, g: -1, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _MainColor: {r: 0.18195978, g: 0.3804578, b: 0.4433962, a: 0.43137255}
-    - _OutlineColor: {r: 0, g: 0, b: 0, a: 1}
-    - _PointLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _PointLightPos: {r: 0, g: 2, b: 0, a: 1}
-    - _PointLightPosition: {r: 2.511, g: 1.474, b: -1.632, a: 0}
-    - _RimColor: {r: 1, g: 1, b: 1, a: 1}
-    - _ShadowColor: {r: 0.36739054, g: 0.6037736, b: 0.5722559, a: 0.4392157}
+    - _MainColor: {r: 1, g: 1, b: 1, a: 1}
+    - _PointLightColor: {r: 0, g: 0, b: 0, a: 1}
+    - _PointLightPosition: {r: 2.407, g: 1.469, b: -1.634, a: 0}
+    - _SpecColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SpecularColor: {r: 0.4339623, g: 0.39506945, b: 0.39506945, a: 1}
     - _SpotLightColor: {r: 1, g: 0.77254903, b: 0.56078434, a: 1}
-    - _SpotLightDir: {r: 0, g: -1, b: 0, a: 0}
     - _SpotLightDirection: {r: 0.39683464, g: -0.07867581, b: -0.91451216, a: 0}
-    - _SpotLightPos: {r: 0, g: 5, b: 0, a: 1}
     - _SpotLightPosition: {r: 0.817, g: 0.725, b: 0.379, a: 0}
   m_BuildTextureStacks: []
